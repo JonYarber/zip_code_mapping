@@ -1,0 +1,24 @@
+---
+title: "Zip Code Geocoding"
+#output: html_document
+output: rmarkdown::github_document
+date: "2024-09-19"
+---
+
+```{r, eval = F, echo = F}
+install.packages('tidygeocoder')
+```
+## Load Libraries
+
+```{r}
+library(tidygeocoder)
+```
+
+## Create sample list of zip codes to geocode
+
+```{r, comment=NA}
+zips <- c('33614', '75287', '39532')
+
+cat(zips)
+```
+

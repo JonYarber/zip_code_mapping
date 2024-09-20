@@ -67,19 +67,20 @@ used to do it:
 
 #### Generate a list of every possible zip code combination (100,000)
 
-I can’t say For this solution, we will utilize the
+For this solution, we will utilize the
 [tidygeocoder](https://jessecambon.github.io/tidygeocoder/) package,
 which I cannot recommend highly enough. It provides access to several
-geocoders without requiring an API key. For my final results, I used
-three different geocoders, but the one that yielded the best outcomes
-was the ArcGIS geocoder.
+geocoders without requiring an API key. I was able to use three
+different geocoders to obtain my final results, but the one that yielded
+the best outcomes and for which I’ll be providin an example was the
+ArcGIS geocoder.
 
 Each geocoder has specific formatting requirements for addresses to
 accurately determine latitude and longitude. The ArcGIS geocoder, for
-instance, preferred the inclusion of “US” in the street address and
-necessitated that the <code>country</code> parameter be specified. As a
-result, when constructing the dataframe, I appended “, US” to the zip
-code and included a country column.
+instance, preferred the inclusion of “US” in the street address whereas
+the Nominatim geocoder necessitated that the <code>country</code>
+parameter be specified. As a result, when constructing the dataframe, I
+appended “, US” to the zip code and included a country column.
 
 ``` r
 suppressPackageStartupMessages(library(tidyverse))
@@ -107,13 +108,13 @@ head(zips)
 With a comprehensive list of all possible zip code combinations, the
 next step was to determine which ones are actually valid.
 
-I discovered that by enabling the full_results option of the ArcGIS
-geocoder, I could access a score variable. This score indicates how
-confident ArcGIS is in the accuracy of the geocoordinates it provides.
-After checking several results with a score of 100, I found them to be
-accurate. Consequently, I filtered the geocoder results to include only
-those with a score of 100. This resulted in the approximate number of
-valid zip codes I needed: around 41,701.
+I discovered that by enabling the <code>full_results</code> parameter of
+the ArcGIS geocoder, I could access a **score** variable. This score
+indicates how confident ArcGIS is in the accuracy of the geocoordinates
+it provides. After checking several results with a score of 100, I found
+them to be accurate. Consequently, I filtered the geocoder results to
+include only those with a score of 100. This resulted in the approximate
+number of valid zip codes I needed: around 41,701.
 
 *This block of code takes several hours to run*
 
@@ -130,22 +131,20 @@ zips_arcgis <-
             select(zip_code, lat, lon)
 
 # View results
-head(zips_arcgis)
+head(zips_arcgis, 10)
 ```
 
-    # A tibble: 10 × 3
-       zip_code   lat   lon
-       <chr>    <dbl> <dbl>
-     1 00208     33.0 -97.3
-     2 00209     36.9 -76.2
-     3 00501     40.8 -73.0
-     4 00544     40.8 -73.0
-     5 00601     18.2 -66.7
-     6 00602     18.4 -67.2
-     7 00603     18.4 -67.1
-     8 00604     18.5 -67.1
-     9 00605     18.4 -67.1
-    10 00606     18.2 -67.0
+       zip_code      lat       lon
+    1     00208 33.02149 -97.28233
+    2     00209 36.88192 -76.20038
+    3     00501 40.81680 -73.04507
+    4     00544 40.81723 -73.04515
+    5     00601 18.15860 -66.71886
+    6     00602 18.38064 -67.19000
+    7     00603 18.44903 -67.13793
+    8     00604 18.49386 -67.14747
+    9     00605 18.44508 -67.14133
+    10    00606 18.18126 -66.98013
 
 3)  Given an address, subset the zip codes to find those within 1
     latitude and 1 longitude of the address.

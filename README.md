@@ -38,27 +38,29 @@ This provided a clear outline of our methodology:
 The entire project is primarily focused on step 1 of the methodology.
 Several challenges and questions arose during this process:
 
-1)  How do we get a *free* list of all U.S. zip codes (approximately
-    43,000)?
-    - While it is relatively easy to obtain a list of residential and
-      deliverable zip codes (around 33,000), acquiring the remaining
-      types (such as special, PO Box, and military zip codes) typically
-      requires a paid subscription. These lists can be quite expensive,
-      and it wouldn’t be cost-effective to purchase them for a one-time
-      use. Therefore, I needed to find an alternative way to generate
-      this list at no cost.
-2)  How do we generate geocoordinates for the zip codes?
-    - To determine if a zip code falls within the radius of an MTF, we
-      need geocoordinates (latitude and longitude). The challenge is
-      finding a way to obtain these coordinates **without requiring an
-      API key**. Ensuring code repeatability is crucial for my contract,
-      and it would be inefficient to ask users to generate an API key to
-      execute the code.
-3)  How do we *efficiently* find which of the approximately 43,000 zip
-    codes lie within a radius of the MTF?
-    - We need a method to assess the proximity of these zip codes to the
-      MTF without having to compare each one individually, which would
-      be overly time-consuming and impractical.
+##### 1) How do we get a *free* list of all U.S. zip codes (approximately 43,000)?
+
+- While it is relatively easy to obtain a list of residential and
+  deliverable zip codes (around 33,000), acquiring the remaining types
+  (such as special, PO Box, and military zip codes) typically requires a
+  paid subscription. These lists can be quite expensive, and it wouldn’t
+  be cost-effective to purchase them for a one-time use. Therefore, I
+  needed to find an alternative way to generate this list at no cost.
+
+##### 2) How do we generate geocoordinates for the zip codes?
+
+- To determine if a zip code falls within the radius of an MTF, we need
+  geocoordinates (latitude and longitude). The challenge is finding a
+  way to obtain these coordinates **without requiring an API key**.
+  Ensuring code repeatability is crucial for my contract, and it would
+  be inefficient to ask users to generate an API key to execute the
+  code.
+
+##### 3) How do we *efficiently* find which of the approximately 43,000 zip codes lie within a radius of the MTF?
+
+- We need a method to assess the proximity of these zip codes to the MTF
+  without having to compare each one individually, which would be overly
+  time-consuming and impractical.
 
 ## Solution
 

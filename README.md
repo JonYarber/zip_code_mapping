@@ -50,7 +50,7 @@ interest. A few challenges arose during this process:
   cost-effective to purchase them for a one-time use. Therefore, I
   needed to find an alternative way to generate this list at no cost.
 
-#### 2) Generating geocoordinates for the ZIP codes
+#### 2) Generating geographic coordinates for the ZIP codes
 
 - To determine if a ZIP code falls within the radius of an MTF, I needed
   geographic coordinates. The challenge is finding a way to obtain these
@@ -92,7 +92,7 @@ zip_codes <- data.frame(zip_code = sapply(0:99999,
                                                        width = 5)))
 ```
 
-#### 2) Use tidygeocoder package to determine which of the ZIP code combinations are valid U.S. ZIP codes.
+#### 2) Use <code>tidygeocoder</code> package to determine which of the ZIP code combinations are valid U.S. ZIP codes.
 
 I cannot recommend the
 [tidygeocoder](https://jessecambon.github.io/tidygeocoder/) package
@@ -106,10 +106,10 @@ Each geocoder has specific formatting requirements to accurately
 determine latitude and longitude. The ArcGIS geocoder, for instance,
 produced better results when “US” was added to the input
 <code>address</code> field. In contrast, the Nominatim geocoder allows
-the use of <code>postalcode</code> parameter along with a
-<code>country</code> parameter. Therefore, when constructing the data
-frame, I created an <code>address</code> column for the ArcGIS geocoder
-and a <code>country</code> column for the Nominatim geocoder.
+the use of <code>postalcode</code> and <code>country</code> parameters.
+Therefore, when constructing the data frame, I created an
+<code>address</code> column for the ArcGIS geocoder and a
+<code>country</code> column for the Nominatim geocoder.
 
 ``` r
 zip_codes <- 
@@ -314,11 +314,11 @@ Let’s examine 5 random results from the data frame.
 
 | name              | address_lat | address_lon | zip_code | zip_lat |  zip_lon |
 |:------------------|------------:|------------:|:---------|--------:|---------:|
-| Willis Tower      |     41.8787 |    -87.6358 | 60561    | 41.7450 | -87.9775 |
-| NY Stock Exchange |     40.7071 |    -74.0108 | 07930    | 40.7876 | -74.6833 |
-| White House       |     38.8976 |    -77.0365 | 22581    | 38.1197 | -76.7825 |
-| NY Stock Exchange |     40.7071 |    -74.0108 | 06725    | 41.5569 | -73.0466 |
-| Willis Tower      |     41.8787 |    -87.6358 | 60465    | 41.6966 | -87.8239 |
+| White House       |     38.8976 |    -77.0365 | 20030    | 38.8597 | -76.9670 |
+| NY Stock Exchange |     40.7071 |    -74.0108 | 10176    | 40.7557 | -73.9792 |
+| White House       |     38.8976 |    -77.0365 | 21088    | 39.6602 | -76.8873 |
+| NY Stock Exchange |     40.7071 |    -74.0108 | 12602    | 41.7070 | -73.9282 |
+| NY Stock Exchange |     40.7071 |    -74.0108 | 11599    | 40.7333 | -73.6041 |
 
 #### 5) Find the distances from the address to ZIP codes
 
@@ -337,20 +337,20 @@ distances <- c()
 # Iterate through the radius_df data frame and calculate the distance between address and ZIP code
 for(row in 1:nrow(radius_df)){
   
-  # Store the address coordinates  
-  # IMPORTANT: While we typically describe coordinates as (latitude, longitude) the distGeo function
-  #            requires them to be passed as (longitude, latitude)!!!
-  coord1 <- radius_df %>% slice(row) %>% select(address_lon, address_lat)
-  
-  # Store ZIP code coordinates
-  coord2 <- radius_df %>% slice(row) %>% select(zip_lon, zip_lat)
-        
-  # Find distance between two coordinates
-  # Distance generated is in meters and requires conversion to miles
-  distance <- distGeo(coord1, coord2) / 1609.3445
-        
-  # Add to distances array
-  distances <- append(distances, distance)
+    #' Store the address coordinates  
+    #' !IMPORTANT: While we typically describe coordinates as (latitude, longitude) the distGeo 
+    #'            function requires them to be passed as (longitude, latitude)!!!
+    coord1 <- radius_df %>% slice(row) %>% select(address_lon, address_lat)
+    
+    # Store ZIP code coordinates
+    coord2 <- radius_df %>% slice(row) %>% select(zip_lon, zip_lat)
+          
+    # Find distance between two coordinates
+    # Distance generated is in meters and requires conversion to miles
+    distance <- distGeo(coord1, coord2) / 1609.3445
+          
+    # Add to distances array
+    distances <- append(distances, distance)
   
 }
 
@@ -358,16 +358,18 @@ for(row in 1:nrow(radius_df)){
 radius_df$distance_in_miles <- round(distances, 2)
 
 # View 5 random results
-radius_df[sample(nrow(radius_df), 5), ]
+radius_df %>%
+    select(-address) %>%
+    slice_sample(n = 5)
 ```
 
 | name                 | address_lat | address_lon | zip_code | zip_lat |   zip_lon | distance_in_miles |
 |:---------------------|------------:|------------:|:---------|--------:|----------:|------------------:|
-| NY Stock Exchange    |     40.7071 |    -74.0108 | 07676    | 40.9864 |  -74.0617 |             19.46 |
-| NY Stock Exchange    |     40.7071 |    -74.0108 | 08753    | 39.9768 |  -74.1611 |             51.01 |
-| NY Stock Exchange    |     40.7071 |    -74.0108 | 08867    | 40.5941 |  -74.9706 |             51.04 |
-| Transamerica Pyramid |     37.7951 |   -122.4027 | 94262    | 38.4961 | -121.4497 |             70.94 |
-| Transamerica Pyramid |     37.7951 |   -122.4027 | 94087    | 37.3520 | -122.0337 |             36.66 |
+| Transamerica Pyramid |     37.7951 |   -122.4027 | 95412    | 38.7182 | -123.3571 |             82.14 |
+| White House          |     38.8976 |    -77.0365 | 20158    | 39.1352 |  -77.6638 |             37.53 |
+| Willis Tower         |     41.8787 |    -87.6358 | 46355    | 41.3609 |  -87.2720 |             40.40 |
+| NY Stock Exchange    |     40.7071 |    -74.0108 | 07022    | 40.8174 |  -73.9994 |              7.63 |
+| White House          |     38.8976 |    -77.0365 | 20585    | 38.8875 |  -77.0264 |              0.88 |
 
 <!--Cleanup-->
 

@@ -189,16 +189,16 @@ and effort; I hope it does the same for anybody who requires it.
 I also used <code>tidygeocoder</code> and the ArcGIS geocoder to
 generate the coordinates for the over 100 MTFs of interest.
 
-Instead of using actual MTF addresses, I will be using the addresses
-provided in the <code>sample_address</code> provided in the
+Instead of using actual MTF addresses, I will be using the addresses of
+some iconic U.S. landmarks from the <code>sample_addresses</code> in the
 <code>tidygeocoder</code> package.
 
 ``` r
 # Generate data frame
-addresses <- as.data.frame(tidygeocoder::sample_addresses)
+landmarks <- as.data.frame(tidygeocoder::sample_addresses)
 
 # View data frame
-addresses
+landmarks
 ```
 
 | name                 | addr                                            |
@@ -217,23 +217,23 @@ Since we’re only looking at United States ZIP codes, only the first 4
 addresses need to be geocoded.
 
 ``` r
-# Geocode addresses
-addresses_gis <- 
-    addresses %>%
+# Geocode landmarks
+landmarks_gis <- 
+    landmarks %>%
         # Use only the first 4 rows
         slice(1:4) %>%
         tidygeocoder::geocode(method = 'arcgis', 
                               address = 'addr') %>%
-        select(name,
+        select(landmark = name,
                address = addr, 
                address_lat = lat, 
                address_lon = long)
 
 # View result
-addresses_gis
+landmarks_gis
 ```
 
-| name                 | address                                    | address_lat | address_lon |
+| landmark             | address                                    | address_lat | address_lon |
 |:---------------------|:-------------------------------------------|------------:|------------:|
 | White House          | 1600 Pennsylvania Ave NW Washington, DC    |     38.8976 |    -77.0365 |
 | Transamerica Pyramid | 600 Montgomery St, San Francisco, CA 94111 |     37.7951 |   -122.4027 |
@@ -260,7 +260,7 @@ latitude and longitude ranges.
 ``` r
 # Initiate an empty data frame to concatenate results
 # This will be the final data frame
-radius_df <- data.frame(name = character(0),
+radius_df <- data.frame(landmark = character(0),
                         address = character(0),
                         address_lat = numeric(0),
                         address_lon = numeric(0),
@@ -268,12 +268,12 @@ radius_df <- data.frame(name = character(0),
                         zip_lat = numeric(0),
                         zip_lon = numeric(0))
 
-# For each address in the addresses_gis data frame
-for(row in 1:nrow(addresses_gis)){
+# For each address in the landmarks_gis data frame
+for(row in 1:nrow(landmarks_gis)){
     
     # Pull the coordinates
-    address_lat <- addresses_gis$address_lat[row]
-    address_lon <- addresses_gis$address_lon[row]
+    address_lat <- landmarks_gis$address_lat[row]
+    address_lon <- landmarks_gis$address_lon[row]
     
     # Filter the zips_gis data frame to those within 1 latitude and longitude of the address
     radius_zips <-
@@ -284,8 +284,8 @@ for(row in 1:nrow(addresses_gis)){
     # Add the address and coordinates to radius_zips data frame
     radius_zips <-
         radius_zips %>%
-            mutate(name = addresses_gis$name[row],
-                   address = addresses_gis$address[row],
+            mutate(landmark = landmarks_gis$landmark[row],
+                   address = landmarks_gis$address[row],
                    address_lat = address_lat,
                    address_lon = address_lon)
   
@@ -294,14 +294,14 @@ for(row in 1:nrow(addresses_gis)){
   
 }
 
-# How many results did we return per address?
+# How many ZIP codes did we return per landmark?
 radius_df %>%
-  group_by(name) %>%
+  group_by(landmark) %>%
   summarize(num_zips = n()) %>%
   arrange(desc(num_zips))
 ```
 
-| name                 | num_zips |
+| landmark             | num_zips |
 |:---------------------|---------:|
 | NY Stock Exchange    |     1411 |
 | White House          |     1140 |
@@ -312,13 +312,13 @@ radius_df %>%
 
 Let’s examine 5 random results from the data frame.
 
-| name              | address_lat | address_lon | zip_code | zip_lat |  zip_lon |
-|:------------------|------------:|------------:|:---------|--------:|---------:|
-| White House       |     38.8976 |    -77.0365 | 20030    | 38.8597 | -76.9670 |
-| NY Stock Exchange |     40.7071 |    -74.0108 | 10176    | 40.7557 | -73.9792 |
-| White House       |     38.8976 |    -77.0365 | 21088    | 39.6602 | -76.8873 |
-| NY Stock Exchange |     40.7071 |    -74.0108 | 12602    | 41.7070 | -73.9282 |
-| NY Stock Exchange |     40.7071 |    -74.0108 | 11599    | 40.7333 | -73.6041 |
+| landmark             | address_lat | address_lon | zip_code | zip_lat |   zip_lon |
+|:---------------------|------------:|------------:|:---------|--------:|----------:|
+| NY Stock Exchange    |     40.7071 |    -74.0108 | 07762    | 40.1522 |  -74.0375 |
+| NY Stock Exchange    |     40.7071 |    -74.0108 | 08005    | 39.7598 |  -74.2436 |
+| Willis Tower         |     41.8787 |    -87.6358 | 60442    | 41.4242 |  -87.9808 |
+| Transamerica Pyramid |     37.7951 |   -122.4027 | 95106    | 37.3377 | -121.8918 |
+| NY Stock Exchange    |     40.7071 |    -74.0108 | 10044    | 40.7616 |  -73.9498 |
 
 #### 5) Find the distances from the address to ZIP codes
 
@@ -339,7 +339,7 @@ for(row in 1:nrow(radius_df)){
   
     #' Store the address coordinates  
     #' !IMPORTANT: While we typically describe coordinates as (latitude, longitude) the distGeo 
-    #'            function requires them to be passed as (longitude, latitude)!!!
+    #'             function requires them to be passed as (longitude, latitude)!!!
     coord1 <- radius_df %>% slice(row) %>% select(address_lon, address_lat)
     
     # Store ZIP code coordinates
@@ -355,7 +355,7 @@ for(row in 1:nrow(radius_df)){
 }
 
 # Add distances to the data frame
-radius_df$distance_in_miles <- round(distances, 2)
+radius_df$dist_in_miles <- round(distances, 2)
 
 # View 5 random results
 radius_df %>%
@@ -363,13 +363,13 @@ radius_df %>%
     slice_sample(n = 5)
 ```
 
-| name                 | address_lat | address_lon | zip_code | zip_lat |   zip_lon | distance_in_miles |
-|:---------------------|------------:|------------:|:---------|--------:|----------:|------------------:|
-| Transamerica Pyramid |     37.7951 |   -122.4027 | 95412    | 38.7182 | -123.3571 |             82.14 |
-| White House          |     38.8976 |    -77.0365 | 20158    | 39.1352 |  -77.6638 |             37.53 |
-| Willis Tower         |     41.8787 |    -87.6358 | 46355    | 41.3609 |  -87.2720 |             40.40 |
-| NY Stock Exchange    |     40.7071 |    -74.0108 | 07022    | 40.8174 |  -73.9994 |              7.63 |
-| White House          |     38.8976 |    -77.0365 | 20585    | 38.8875 |  -77.0264 |              0.88 |
+| landmark          | address_lat | address_lon | zip_code | zip_lat |  zip_lon | dist_in_miles |
+|:------------------|------------:|------------:|:---------|--------:|---------:|--------------:|
+| White House       |     38.8976 |    -77.0365 | 20138    | 38.6358 | -77.6744 |         38.90 |
+| White House       |     38.8976 |    -77.0365 | 22152    | 38.7775 | -77.2366 |         13.61 |
+| NY Stock Exchange |     40.7071 |    -74.0108 | 19057    | 40.1432 | -74.8559 |         59.16 |
+| NY Stock Exchange |     40.7071 |    -74.0108 | 11367    | 40.7249 | -73.8196 |         10.11 |
+| White House       |     38.8976 |    -77.0365 | 20825    | 38.9703 | -77.0772 |          5.47 |
 
 <!--Cleanup-->
 
@@ -380,15 +380,17 @@ lie within a 20 mile radius of each of these monuments.
 
 ``` r
 radius_df %>%
-    filter(distance_in_miles <= 20) %>%
-    group_by(name) %>%
+    filter(dist_in_miles <= 20) %>%
+    group_by(landmark) %>%
     summarize(num_zips = n()) %>%
     arrange(desc(num_zips))
 ```
 
-| name                 | num_zips |
+| landmark             | num_zips |
 |:---------------------|---------:|
 | NY Stock Exchange    |      552 |
 | White House          |      546 |
 | Willis Tower         |      188 |
 | Transamerica Pyramid |      171 |
+
+## Conclusion

@@ -1,7 +1,7 @@
 
 <!--Set environment and load needed functions-->
 
-# ZIP Code Mapping
+# Zip Code Generation and Proximity Mapping
 
 ## Context
 
@@ -312,11 +312,11 @@ Let’s examine 5 random results from the data frame.
 
 | landmark             | address_lat | address_lon | zip_code | zip_lat |   zip_lon |
 |:---------------------|------------:|------------:|:---------|--------:|----------:|
-| Willis Tower         |     41.8786 |    -87.6358 | 60602    | 41.8829 |  -87.6293 |
-| Transamerica Pyramid |     37.7951 |   -122.4027 | 95013    | 37.2145 | -121.7371 |
-| White House          |     38.8976 |    -77.0365 | 20422    | 38.9250 |  -77.0121 |
-| NY Stock Exchange    |     40.7071 |    -74.0108 | 11702    | 40.6955 |  -73.3267 |
-| White House          |     38.8976 |    -77.0365 | 20879    | 39.1698 |  -77.1871 |
+| White House          |     38.8976 |    -77.0365 | 20224    | 38.8920 |  -77.0271 |
+| White House          |     38.8976 |    -77.0365 | 22121    | 38.7121 |  -77.0861 |
+| White House          |     38.8976 |    -77.0365 | 20997    | 38.9973 |  -77.0338 |
+| NY Stock Exchange    |     40.7071 |    -74.0108 | 08876    | 40.5756 |  -74.6206 |
+| Transamerica Pyramid |     37.7951 |   -122.4027 | 94951    | 38.3091 | -122.6545 |
 
 #### 5) Find the distances from the address to ZIP codes
 
@@ -361,13 +361,13 @@ radius_df %>%
     slice_sample(n = 5)
 ```
 
-| landmark             | address_lat | address_lon | zip_code | zip_lat |   zip_lon | dist_in_miles |
-|:---------------------|------------:|------------:|:---------|--------:|----------:|--------------:|
-| Transamerica Pyramid |     37.7951 |   -122.4027 | 95121    | 37.3041 | -121.8115 |         46.91 |
-| White House          |     38.8976 |    -77.0365 | 20230    | 38.8921 |  -77.0331 |          0.42 |
-| NY Stock Exchange    |     40.7071 |    -74.0108 | 07086    | 40.7709 |  -74.0194 |          4.43 |
-| NY Stock Exchange    |     40.7071 |    -74.0108 | 12548    | 41.6726 |  -74.1040 |         66.80 |
-| Willis Tower         |     41.8786 |    -87.6358 | 53125    | 42.5421 |  -88.5668 |         66.17 |
+| landmark          | address_lat | address_lon | zip_code | zip_lat |  zip_lon | dist_in_miles |
+|:------------------|------------:|------------:|:---------|--------:|---------:|--------------:|
+| NY Stock Exchange |     40.7071 |    -74.0108 | 07722    | 40.2921 | -74.1739 |         29.90 |
+| NY Stock Exchange |     40.7071 |    -74.0108 | 07826    | 41.1708 | -74.7628 |         50.72 |
+| NY Stock Exchange |     40.7071 |    -74.0108 | 07448    | 40.4203 | -74.1020 |         20.36 |
+| White House       |     38.8976 |    -77.0365 | 20501    | 38.8968 | -77.0351 |          0.09 |
+| NY Stock Exchange |     40.7071 |    -74.0108 | 08876    | 40.5756 | -74.6206 |         33.31 |
 
 <!--Cleanup-->
 

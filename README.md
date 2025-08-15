@@ -5,25 +5,25 @@
 
 ## Context
 
-I work as a contractor for the Air Force Medical Command’s (AFMEDCOM)
-Studies and Analysis Division (A9), where we provide analytical support
-for healthcare-related inquiries concerning the Air Force. One of our
-key projects involves examining the types of care that active duty
-service members seek off base, which we refer to as Private Sector Care.
-While we have access to Private Sector Care data, there is no efficient
+I previously worked as a contractor for the Air Force Medical Command’s
+(AFMEDCOM) Studies and Analysis Division (A9), providing analytical
+support for healthcare-related inquiries concerning the Air Force. One
+of our key projects involved examining the types of care that active
+duty service members seek off base, referred to as Private Sector Care.
+While we had access to Private Sector Care data, there was no efficient
 way to filter this data to include only the records for care performed
 within a certain radius of any given installation or military treatment
 facility (MTF). With millions of records generated each fiscal year and
-a focus on five years of data for this project, it is critical that we
-filter the results to include only the specific records we need during
+a focus on five years of data for this project, it was critical to
+filter the results to include only the specific records we needed during
 our initial processing.
 
-One piece of information included in the data is the ZIP code of the
-healthcare professional from whom care was sought. We determined that an
-effective way to filter the data is to identify all ZIP codes within a
-certain radius of a given MTF and only pull records where the healthcare
-provider’s ZIP code matches one of those identified. While this method
-may not be perfect, it successfully reduces the data set to a more
+One piece of information in the data was the ZIP code of the healthcare
+professional from whom care was sought. We determined that an effective
+way to filter the data is to identify all ZIP codes within a certain
+radius of a given MTF and only examine records where the healthcare
+provider’s ZIP code matched one of those identified. While this method
+may not be perfect, it successfully reduced the data set to a more
 manageable number of records.
 
 This provided a clear outline of our methodology:
@@ -37,42 +37,40 @@ This provided a clear outline of our methodology:
 
 ## Challenges
 
-This project is focused on step 1 of the outlined methodology - produce
-a list of all ZIP codes within a specified radius of our MTFs of
+This project focuses on Step 1 of the outlined methodology—produce a
+list of all U.S. ZIP codes within a specified radius of our MTFs of
 interest. A few challenges arose during this process:
 
-#### 1) Acquiring a <ins>free</ins> list of the approximately 41,600 U.S. ZIP codes
+#### 1) Acquiring a <i>free</i> list of all ~41,600 U.S. ZIP codes
 
-- While it is relatively easy to obtain a list of residential and
-  deliverable ZIP codes (~33,800), acquiring the remaining types such as
-  special, PO Box, and military ZIP codes typically requires a paid
-  subscription. These lists can be quite expensive, and it wouldn’t be
-  cost-effective to purchase them for a one-time use. Therefore, I
-  needed to find an alternative way to generate this list at no cost.
+• While it is relatively easy to obtain a list of residential and
+deliverable ZIP codes (~33,800), acquiring the remaining types such as
+special, PO Box, and military ZIP codes typically requires a paid
+subscription. These lists can be quite expensive, and it wasn’t
+cost-effective to purchase them for a one-time use. Therefore, I needed
+to find an alternative way to generate the complete list at no cost.
 
 #### 2) Generating geographic coordinates for the ZIP codes
 
-- To determine if a ZIP code falls within the radius of an MTF, I needed
-  geographic coordinates. The challenge is finding a way to obtain these
-  coordinates **without requiring an API key**. Ensuring code
-  repeatability is crucial for my contract, and it would be inefficient
-  to ask users to generate an API key to execute the code.
+• To determine if a ZIP code falls within the radius of an MTF, I needed
+geographic coordinates. The challenge was finding a way to obtain these
+coordinates **without requiring an API key**. Code repeatability was
+critical, and it would be inefficient to ask future users to create API
+keys before running the process.
 
-#### 3) <ins>Efficiently</ins> finding which of these ZIP codes are within a radius of our MTFs
+#### 3) <i>Efficiently</i> finding ZIP codes within a given radius
 
-- I needed a method of assessing the proximity of these ZIP codes to an
-  MTF without having to compare every single one individually, which
-  would be overly time-consuming and impractical.
+• I needed a method of assessing the proximity of ZIP codes to an MTF
+without comparing each one individually, which would have been
+time-consuming and impractical.
 
-#### 4) Packages and libraries built to perform this function were outdated or inaccessible to me
+#### 4) Dealing with outdated or incompatible packages
 
-- When I found a package that seemed reliable, I often couldn’t use it
-  because it wasn’t compatible with my R version. Additionally, several
-  packages utilized ZIP code data that was significantly outdated. The
-  same issue arose with Python packages I examined. ZIP codes change
-  frequently, so it is essential for the data to be continuously
-  updated. One package I recall, for example, used a ZIP code list from
-  as far back as 2008.
+• Many R packages for this task were incompatible with my environment,
+and the ones I could install contained outdated ZIP code data. I recall
+one package using a ZIP code list from as far back as 2008. Since ZIP
+codes change frequently, it was important that this process always use
+the most up-to-date information when run.
 
 ## Solution
 
@@ -156,22 +154,22 @@ zips_gis <-
 head(zips_gis, 10)
 ```
 
-| zip_code | zip_lat | zip_lon  |
-|:--------:|:-------:|:--------:|
-|  00208   | 33.0214 | -97.2823 |
-|  00209   | 36.8819 | -76.2003 |
-|  00501   | 40.8167 | -73.0450 |
-|  00544   | 40.8172 | -73.0451 |
-|  00601   | 18.1585 | -66.7188 |
-|  00602   | 18.3806 | -67.1899 |
-|  00603   | 18.4490 | -67.1379 |
-|  00604   | 18.4938 | -67.1474 |
-|  00605   | 18.4450 | -67.1413 |
-|  00606   | 18.1812 | -66.9801 |
+| zip_code | zip_lat |  zip_lon  |
+|:--------:|:-------:|:---------:|
+|  00103   | 34.2386 | -118.5552 |
+|  00208   | 33.0214 | -97.2823  |
+|  00209   | 36.8819 | -76.2003  |
+|  00501   | 40.8167 | -73.0450  |
+|  00544   | 40.8172 | -73.0451  |
+|  00586   | 18.3436 | -67.0284  |
+|  00601   | 18.1585 | -66.7188  |
+|  00602   | 18.3806 | -67.1899  |
+|  00603   | 18.4490 | -67.1379  |
+|  00604   | 18.4938 | -67.1474  |
 
-    Number of ZIP codes geocoded: 41,071
+    Number of ZIP codes geocoded: 43,003
 
-It was not essential for me to obtain every single ZIP code; however,
+It was not essential for me to obtain *every* single ZIP code; however,
 after processing those ZIP codes that either returned a score less than
 100 or no results through the Nominatim geocoder, I ended up with 43,003
 geocoded ZIP codes. As mentioned previously, ZIP codes are constantly
@@ -238,7 +236,7 @@ landmarks_gis
 | White House          | 1600 Pennsylvania Ave NW Washington, DC    |     38.8976 |    -77.0365 |
 | Transamerica Pyramid | 600 Montgomery St, San Francisco, CA 94111 |     37.7951 |   -122.4027 |
 | NY Stock Exchange    | 11 Wall Street, New York, New York         |     40.7071 |    -74.0108 |
-| Willis Tower         | 233 S Wacker Dr, Chicago, IL 60606         |     41.8787 |    -87.6358 |
+| Willis Tower         | 233 S Wacker Dr, Chicago, IL 60606         |     41.8786 |    -87.6358 |
 
 #### 4) Find all ZIP codes within a square area an MTF.
 
@@ -303,10 +301,10 @@ radius_df %>%
 
 | landmark             | num_zips |
 |:---------------------|---------:|
-| NY Stock Exchange    |     1411 |
-| White House          |     1140 |
-| Transamerica Pyramid |      579 |
-| Willis Tower         |      549 |
+| NY Stock Exchange    |     1457 |
+| White House          |     1179 |
+| Transamerica Pyramid |      603 |
+| Willis Tower         |      555 |
 
 <!--Cleanup-->
 
@@ -314,11 +312,11 @@ Let’s examine 5 random results from the data frame.
 
 | landmark             | address_lat | address_lon | zip_code | zip_lat |   zip_lon |
 |:---------------------|------------:|------------:|:---------|--------:|----------:|
-| NY Stock Exchange    |     40.7071 |    -74.0108 | 07762    | 40.1522 |  -74.0375 |
-| NY Stock Exchange    |     40.7071 |    -74.0108 | 08005    | 39.7598 |  -74.2436 |
-| Willis Tower         |     41.8787 |    -87.6358 | 60442    | 41.4242 |  -87.9808 |
-| Transamerica Pyramid |     37.7951 |   -122.4027 | 95106    | 37.3377 | -121.8918 |
-| NY Stock Exchange    |     40.7071 |    -74.0108 | 10044    | 40.7616 |  -73.9498 |
+| Willis Tower         |     41.8786 |    -87.6358 | 60602    | 41.8829 |  -87.6293 |
+| Transamerica Pyramid |     37.7951 |   -122.4027 | 95013    | 37.2145 | -121.7371 |
+| White House          |     38.8976 |    -77.0365 | 20422    | 38.9250 |  -77.0121 |
+| NY Stock Exchange    |     40.7071 |    -74.0108 | 11702    | 40.6955 |  -73.3267 |
+| White House          |     38.8976 |    -77.0365 | 20879    | 39.1698 |  -77.1871 |
 
 #### 5) Find the distances from the address to ZIP codes
 
@@ -363,13 +361,13 @@ radius_df %>%
     slice_sample(n = 5)
 ```
 
-| landmark          | address_lat | address_lon | zip_code | zip_lat |  zip_lon | dist_in_miles |
-|:------------------|------------:|------------:|:---------|--------:|---------:|--------------:|
-| White House       |     38.8976 |    -77.0365 | 20138    | 38.6358 | -77.6744 |         38.90 |
-| White House       |     38.8976 |    -77.0365 | 22152    | 38.7775 | -77.2366 |         13.61 |
-| NY Stock Exchange |     40.7071 |    -74.0108 | 19057    | 40.1432 | -74.8559 |         59.16 |
-| NY Stock Exchange |     40.7071 |    -74.0108 | 11367    | 40.7249 | -73.8196 |         10.11 |
-| White House       |     38.8976 |    -77.0365 | 20825    | 38.9703 | -77.0772 |          5.47 |
+| landmark             | address_lat | address_lon | zip_code | zip_lat |   zip_lon | dist_in_miles |
+|:---------------------|------------:|------------:|:---------|--------:|----------:|--------------:|
+| Transamerica Pyramid |     37.7951 |   -122.4027 | 95121    | 37.3041 | -121.8115 |         46.91 |
+| White House          |     38.8976 |    -77.0365 | 20230    | 38.8921 |  -77.0331 |          0.42 |
+| NY Stock Exchange    |     40.7071 |    -74.0108 | 07086    | 40.7709 |  -74.0194 |          4.43 |
+| NY Stock Exchange    |     40.7071 |    -74.0108 | 12548    | 41.6726 |  -74.1040 |         66.80 |
+| Willis Tower         |     41.8786 |    -87.6358 | 53125    | 42.5421 |  -88.5668 |         66.17 |
 
 <!--Cleanup-->
 
@@ -388,9 +386,15 @@ radius_df %>%
 
 | landmark             | num_zips |
 |:---------------------|---------:|
-| NY Stock Exchange    |      552 |
-| White House          |      546 |
-| Willis Tower         |      188 |
-| Transamerica Pyramid |      171 |
+| NY Stock Exchange    |      562 |
+| White House          |      554 |
+| Willis Tower         |      189 |
+| Transamerica Pyramid |      177 |
 
 ## Conclusion
+
+In the end, this project delivered exactly what was needed and
+established a process that future users could run with ease. We updated
+ZIP code data that had gone unchanged for years and created a method to
+keep it current whenever necessary. I hope this helps with your own
+geospatial projects as well!
